@@ -8,22 +8,7 @@ export class PostController {
 
     @Get('')
     getList() {
-        return {
-            postList: [
-                {
-                    id: '1',
-                    title: '글1',
-                },
-                {
-                    id: '2',
-                    title: '안녕하세요',
-                },
-                {
-                    id: '3',
-                    title: '글3',
-                }
-            ]
-        }
+        return this.postService.getPostList()
     }
 
     @Get(':id')
