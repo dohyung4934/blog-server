@@ -1,35 +1,34 @@
 import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common'
 import { PostService } from './post.service'
 import { CreateNewPostDto } from './dto/create-new-post.dto'
+import { UpdatePostDto } from './dto/update-post.dto'
 
 @Controller('post')
 export class PostController {
-    constructor(private readonly postService: PostService) {}
+    constructor(private readonly postService: PostService) { }
 
     @Get('')
-    getList() {
-        return this.postService.getPostList()
+    async getList() {
+        return await this.postService.getPostList()
     }
 
     @Get(':id')
-    getDetail(@Param('id') id: string): string {
-        return 'detail' + id
+    async getDetail(@Param('id') id: string) {
+        return await this.postService.getPostById(id)
     }
 
     @Post()
-    createNewPost(@Body() createNewPostDto: CreateNewPostDto) {
-        return {
-            id: 333
-        }
+    async createNewPost(@Body() createNewPostDto: CreateNewPostDto) {
+        return await this.postService.createNewPost(createNewPostDto)
     }
 
     @Put(':id')
-    updatePost(@Param('id') id: string): string {
-        return 'update' + id
+    async updatePost(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+        return await this.postService.updatePost(id, updatePostDto)
     }
 
     @Delete(':id')
-    deletePost(@Param('id') id: string): string {
-        return 'delete' + id
+    async deletePost(@Param('id') id: string) {
+        return await this.postService.deletePost(id)
     }
 }
