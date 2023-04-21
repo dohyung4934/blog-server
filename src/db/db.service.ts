@@ -14,7 +14,7 @@ export class DbService implements OnModuleDestroy {
 
     private initConnection() {
         const connection = createConnection({
-            host: '43.200.178.110',
+            host: this.configService.get<string>('DATABASE_HOST'),
             user: this.configService.get<string>('DATABASE_USER'),
             password: this.configService.get<string>('DATABASE_PASSWORD'),
             database: 'kdh-board-db'
