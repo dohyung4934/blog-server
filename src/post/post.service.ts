@@ -22,7 +22,7 @@ export class PostService {
   }
 
   async getPostById(id: string) {
-    const response = await this.dbService.query<PostEntity[]>('SELECT * FROM posts WHERE id = ?', [id])
+    const response = await this.dbService.query<PostEntity[]>('SELECT posts.id, title, contents, username FROM posts LEFT OUTER JOIN users ON posts.author_id = users.id WHERE posts.id = ?', [id])
     if (response.length !== 1) {
       throw new NotFoundException('해당 ID로 게시글을 찾지 못했습니다.')
     }
@@ -32,15 +32,21 @@ export class PostService {
       postDetail: {
         id: post.id,
         title: post.title,
-        contents: post.contents
+        contents: post.contents,
+        author: post.username
       }
     }
   }
 
   async createNewPost(newPost: CreateNewPostDto) {
-    console.log(newPost)
     try {
-      const response = await this.dbService.query<OkPacket>('INSERT INTO posts(title, contents) VALUES (?, ?)', [newPost.title, newPost.body])
+      const dml = `
+        INSERT INTO posts(title, contents, author_id)
+        SELECT ?, ?, id
+        FROM users
+        WHERE username = ?
+      `
+      const response = await this.dbService.query<OkPacket>(dml, [newPost.title, newPost.body, newPost.username])
 
       return {
         id: response.insertId
